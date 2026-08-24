@@ -142,7 +142,9 @@ sequenceDiagram
 4. Under **Clusters > Connect > Drivers**, copy the connection string:
    ```env
    MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.abcde.mongodb.net/code_optimizer?retryWrites=true&w=majority
+   MONGODB_DB_NAME=code_optimizer
    ```
+   The app uses the `code_optimizer` database by default. If the URI does not include a database name, set `MONGODB_DB_NAME` explicitly in Render. The database user must have read/write access to this database.
 
 ---
 
@@ -172,6 +174,7 @@ sequenceDiagram
 |---|---|---|
 | `GEMINI_API_KEY` | `your_gemini_api_key` | Secret key from [Google AI Studio](https://aistudio.google.com/) |
 | `MONGODB_URI` | `mongodb+srv://...` | MongoDB Atlas cluster connection string |
+| `MONGODB_DB_NAME` | `code_optimizer` | Optional database name; defaults to `code_optimizer` |
 | `JWT_SECRET` | `a_secure_random_string` | Secret for signing user authentication tokens |
 | `NODE_ENV` | `production` | Enables production bundle and static serving |
 
@@ -206,7 +209,7 @@ Open `http://localhost:3000` in your browser.
 
 - **Zero Client Key Leaks:** `GEMINI_API_KEY` and `MONGODB_URI` are server-only secrets and are never exposed in browser JavaScript bundles.
 - **Bcrypt Password Security:** User passwords are never saved in plaintext; passwords are salted and hashed with 10 salt rounds.
-- **Resilient Fallback:** If `MONGODB_URI` is not provided or connection times out, the app safely falls back to local memory without crashing.
+- **Development Fallback:** When running locally without `MONGODB_URI`, the app may use in-memory storage for development. In production, or whenever `MONGODB_URI` is configured, signup and login fail clearly if MongoDB is unavailable or a user cannot be persisted; the app never reports a non-persisted account as a successful Atlas account.
 
 ---
 

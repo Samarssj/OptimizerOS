@@ -9,7 +9,7 @@ import { createServer as createViteServer } from 'vite';
 
 dotenv.config();
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT || 3000);
 const JWT_SECRET = process.env.JWT_SECRET || 'code_optimizer_jwt_secret_default_key_2026';
 
 // ----------------------------------------------------
@@ -19,8 +19,21 @@ let mongoClient: MongoClient | null = null;
 let db: Db | null = null;
 let isMongoConnected = false;
 let mongoConnectionError: string | null = null;
+let lastMongoOperationError: string | null = null;
+const mongoDatabaseName = process.env.MONGODB_DB_NAME?.trim() || 'code_optimizer';
 
-// In-memory storage fallback if MongoDB URI not configured or connection is refused
+function isPersistentStorageRequired(): boolean {
+  // Local development may use the in-memory fallback, but a configured MongoDB
+  // URI and every production deployment must fail clearly instead of creating
+  // accounts that disappear when the process restarts.
+  return process.env.NODE_ENV === 'production' || Boolean(process.env.MONGODB_URI?.trim());
+}
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+// In-memory storage fallback is only for local development without MongoDB configured
 const inMemoryUsers: any[] = [];
 const inMemoryHistory: any[] = [];
 const inMemoryQuizScores: any[] = [];
@@ -47,14 +60,15 @@ async function initMongo() {
     });
 
     await mongoClient.connect();
-    db = mongoClient.db('code_optimizer');
+    db = mongoClient.db(mongoDatabaseName);
 
     // Quick ping verification
     await db.command({ ping: 1 });
 
     isMongoConnected = true;
     mongoConnectionError = null;
-    console.log('[Database] Connected successfully to MongoDB Atlas.');
+    lastMongoOperationError = null;
+    console.log(`[Database] Connected successfully to MongoDB Atlas database "${mongoDatabaseName}".`);
 
     // Safe index creation (non-blocking)
     db.collection('users').createIndex({ email: 1 }, { unique: true }).catch(() => {});
@@ -77,6 +91,7 @@ async function initMongo() {
     }
 
     mongoConnectionError = `${friendlyReason}`;
+    lastMongoOperationError = null;
     console.warn(`[Database] MongoDB connection notice: ${mongoConnectionError}`);
   }
 }
@@ -360,8 +375,8 @@ async function startServer() {
     res.json({
       connected: isMongoConnected,
       driver: isMongoConnected ? 'MongoDB Atlas' : 'In-Memory / Local Storage',
-      error: mongoConnectionError,
-      database: isMongoConnected ? 'code_optimizer' : 'local_storage',
+      error: mongoConnectionError || lastMongoOperationError,
+      database: isMongoConnected ? mongoDatabaseName : 'local_storage',
     });
   });
 
@@ -409,12 +424,22 @@ async function startServer() {
           }
           await db.collection('users').insertOne(newUser);
           savedInDb = true;
-        } catch (dbErr) {
-          console.warn('[Database] Falling back to in-memory user save:', dbErr);
+        } catch (dbErr: any) {
+          const message = getErrorMessage(dbErr);
+          lastMongoOperationError = `Signup persistence failed: ${message}`;
+          console.error(`[Database] ${lastMongoOperationError}`, dbErr);
+          if (dbErr?.code === 11000) {
+            return res.status(400).json({ error: 'An account with this email already exists.' });
+          }
+          return res.status(503).json({
+            error: 'MongoDB is connected, but the account could not be saved. Check the Render logs and Atlas database-user permissions.',
+          });
         }
-      }
-
-      if (!savedInDb) {
+      } else if (isPersistentStorageRequired()) {
+        return res.status(503).json({
+          error: 'Persistent database storage is unavailable. The account was not created. Check MONGODB_URI and the Render deployment logs.',
+        });
+      } else {
         const existing = inMemoryUsers.find((u) => u.email === normalizedEmail);
         if (existing) {
           return res.status(400).json({ error: 'An account with this email already exists.' });
@@ -431,7 +456,7 @@ async function startServer() {
       res.status(201).json({
         user: { id: userId, name: newUser.name, email: normalizedEmail },
         token,
-        storage: isMongoConnected ? 'MongoDB Atlas' : 'In-Memory Storage',
+        storage: savedInDb ? 'MongoDB Atlas' : 'In-Memory Storage',
       });
     } catch (err: any) {
       console.error('Signup error:', err);
@@ -453,11 +478,18 @@ async function startServer() {
         try {
           user = await db.collection('users').findOne({ email: normalizedEmail });
         } catch (dbErr) {
-          console.warn('[Database] DB lookup failed, trying in-memory:', dbErr);
+          const message = getErrorMessage(dbErr);
+          lastMongoOperationError = `Login lookup failed: ${message}`;
+          console.error(`[Database] ${lastMongoOperationError}`, dbErr);
+          return res.status(503).json({
+            error: 'MongoDB could not verify the account. Please try again after checking the database connection.',
+          });
         }
-      }
-
-      if (!user) {
+      } else if (isPersistentStorageRequired()) {
+        return res.status(503).json({
+          error: 'Persistent database storage is unavailable. Check MONGODB_URI and the Render deployment logs.',
+        });
+      } else {
         user = inMemoryUsers.find((u) => u.email === normalizedEmail);
       }
 
@@ -479,7 +511,7 @@ async function startServer() {
       res.json({
         user: { id: user.id || user._id?.toString(), name: user.name, email: user.email },
         token,
-        storage: isMongoConnected ? 'MongoDB Atlas' : 'In-Memory Storage',
+        storage: isMongoConnected && db ? 'MongoDB Atlas' : 'In-Memory Storage',
       });
     } catch (err: any) {
       console.error('Login error:', err);
@@ -490,12 +522,44 @@ async function startServer() {
   app.get('/api/auth/me', requireAuth, async (req: AuthRequest, res) => {
     try {
       const user = req.user!;
-      res.json({
-        user: { id: user.id, name: user.name, email: user.email },
-        storage: isMongoConnected ? 'MongoDB Atlas' : 'In-Memory Storage',
+
+      if (isMongoConnected && db) {
+        const persistedUser = await db.collection('users').findOne(
+          { id: user.id },
+          { projection: { _id: 1, id: 1, name: 1, email: 1 } }
+        );
+        if (!persistedUser) {
+          return res.status(401).json({ error: 'Account was not found in the database. Please sign up again.' });
+        }
+        return res.json({
+          user: {
+            id: persistedUser.id || persistedUser._id?.toString(),
+            name: persistedUser.name,
+            email: persistedUser.email,
+          },
+          storage: 'MongoDB Atlas',
+        });
+      }
+
+      if (isPersistentStorageRequired()) {
+        return res.status(503).json({
+          error: 'Persistent database storage is unavailable. Check MONGODB_URI and the Render deployment logs.',
+        });
+      }
+
+      const inMemoryUser = inMemoryUsers.find((candidate) => candidate.id === user.id);
+      if (!inMemoryUser) {
+        return res.status(401).json({ error: 'Account session is no longer available. Please sign up again.' });
+      }
+      return res.json({
+        user: { id: inMemoryUser.id, name: inMemoryUser.name, email: inMemoryUser.email },
+        storage: 'In-Memory Storage',
       });
     } catch (err: any) {
-      res.status(500).json({ error: 'Failed to retrieve profile.' });
+      const message = getErrorMessage(err);
+      lastMongoOperationError = `Profile lookup failed: ${message}`;
+      console.error(`[Database] ${lastMongoOperationError}`, err);
+      res.status(503).json({ error: 'Failed to verify the account in the database.' });
     }
   });
 
