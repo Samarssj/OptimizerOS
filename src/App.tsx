@@ -53,7 +53,8 @@ export default function App() {
       const savedUser = getSafeStoredUser();
       if (savedToken && savedUser) {
         setAuthToken(savedToken);
-        setUser(savedUser);
+        // Do not trust the cached profile until the server verifies the token
+        // and account against the configured persistence layer.
         verifyUserSession(savedToken);
       }
     } catch (e) {
@@ -103,7 +104,10 @@ export default function App() {
         handleLogout();
       }
     } catch (e) {
-      console.warn('Session verification failed', e);
+      console.warn('Session verification failed; clearing cached session', e);
+      // Fail closed: a cached localStorage token must not keep the app
+      // apparently authenticated when the server cannot verify its account.
+      handleLogout();
     }
   };
 

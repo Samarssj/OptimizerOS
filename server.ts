@@ -377,6 +377,8 @@ async function startServer() {
       driver: isMongoConnected ? 'MongoDB Atlas' : 'In-Memory / Local Storage',
       error: mongoConnectionError || lastMongoOperationError,
       database: isMongoConnected ? mongoDatabaseName : 'local_storage',
+      authPersistence: isPersistentStorageRequired() ? 'required' : 'development-fallback-allowed',
+      release: process.env.RENDER_GIT_COMMIT || process.env.GIT_COMMIT || 'unknown',
     });
   });
 
