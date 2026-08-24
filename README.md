@@ -8,14 +8,15 @@
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
 ![Express.js](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
+![MongoDB](https://img.shields.io/badge/MongoDB_Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Google Gemini](https://img.shields.io/badge/Google_Gemini_AI-8E75B2?style=for-the-badge&logo=google&logoColor=white)
-![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)
+![Render](https://img.shields.io/badge/Render-Deploy_Ready-black?style=for-the-badge&logo=render&logoColor=46E3B7)
 
 <p align="center">
-  <b>High-performance AI engine for automated code optimization, asymptotic complexity analysis, architectural refactoring, and interactive side-by-side diff verification.</b>
+  <b>Full-stack AI developer platform for automated code optimization, asymptotic complexity analysis, design pattern refactoring, persistent user accounts (MongoDB Atlas), and interactive side-by-side diff verification.</b>
 </p>
 
-[Live Preview](https://ais-pre-carec2f2ogumkvexpxnv5t-170264886081.asia-southeast1.run.app) • [Architecture](#-system-architecture) • [Workflow](#-system-workflow) • [Key Features](#-features) • [Deployment](#-deployment-guide)
+[Architecture](#-system-architecture) • [Workflow](#-system-workflow) • [Key Features](#-features) • [Deploy on Render](#-deploy-to-render) • [MongoDB Setup](#-mongodb-atlas-configuration)
 
 </div>
 
@@ -23,9 +24,9 @@
 
 ## 📖 Overview
 
-**AI Code Performance & Optimization Studio** is a full-stack developer acceleration platform that analyzes arbitrary code snippets, uncovers asymptotic performance bottlenecks ($O(N^2) \to O(N)$), computes precise algorithmic time/space metrics, and generates complete, production-ready optimized implementations.
+**AI Code Performance & Optimization Studio** is a production-ready full-stack developer acceleration platform. It analyzes code snippets, detects asymptotic complexity bottlenecks ($O(N^2) \to O(N)$), benchmarks multi-scale execution time, and provides full, runnable optimized implementations.
 
-Developers can inspect line-by-line modifications via a synchronized side-by-side Diff Viewer, simulate execution scalability across large data bounds, and export patch files or comprehensive performance audit reports.
+User accounts, sessions, and past optimizations are permanently persisted to **MongoDB Atlas** (with an automatic in-memory fallback for local prototyping).
 
 ---
 
@@ -36,16 +37,21 @@ Developers can inspect line-by-line modifications via a synchronized side-by-sid
   - Before vs. After **Time Complexity** (e.g. $O(N^2) \to O(N \log N)$)
   - Before vs. After **Space Complexity** (e.g. $O(N) \to O(1)$)
   - Estimated **Execution Speedup Factor** & Readability Score ratings (1–10).
+- **🔒 Persistent User Accounts & Authentication:**
+  - Secure bcrypt password hashing and signed JWT sessions.
+  - Multi-user data isolation and history tracking with **MongoDB Atlas**.
 - **🔍 Interactive Side-by-Side Diff Viewer:**
   - Synchronized scrolling between original and optimized code.
   - Granular addition, deletion, and line modification tracking.
   - Dedicated **Split View**, **Unified View**, and **Optimized Only** layout modes.
   - One-click full-source clipboard copy and file downloading.
 - **🛠️ Automated Architectural Refactor Studio:** Target custom architectural refactor patterns including:
-  - *Clean Architecture & Modularization*
-  - *Concurrency & Asynchronous Non-blocking Execution*
-  - *Memory Allocation & Garbage Collection Reduction*
-  - *Functional Paradigm Transformation*
+  - *Loops to Declarative Functional Pipelines*
+  - *Guard Clauses & Early Returns*
+  - *Strategy Pattern & Dispatch Tables*
+  - *Builder & Fluent Pipelines*
+  - *Memoization & Caching*
+  - *Immutability & Pure Functions*
 - **📈 Multi-Scale Benchmark Simulation:** Simulates runtime latency comparisons across input scales from $N = 100$ to $N = 1,000,000$.
 - **🧠 Interactive Coding & Optimization Quizzes:** Integrated knowledge assessment modules to test algorithmic concepts across Python, TypeScript, Java, C++, Go, and Rust.
 - **📦 Multi-Format Export:** Instant export to `.patch` (Git unified diff), `.md` (Performance Audit Report), `.json` (Full Dataset), and raw source code files.
@@ -61,10 +67,10 @@ Developers can inspect line-by-line modifications via a synchronized side-by-sid
 |---|---|
 | **Frontend UI** | ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black) ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white) ![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?logo=vite&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/Tailwind-CSS-06B6D4?logo=tailwindcss&logoColor=white) |
 | **Icons & Syntax** | ![Lucide](https://img.shields.io/badge/Lucide-Icons-F05032?logo=lucide&logoColor=white) ![PrismJS](https://img.shields.io/badge/Prism.js-Syntax_Highlighting-2563EB) ![Diff](https://img.shields.io/badge/diff-Line_Level-emerald) |
-| **Backend Service** | ![NodeJS](https://img.shields.io/badge/Node.js-20.x-339933?logo=nodedotjs&logoColor=white) ![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white) ![TypeScript](https://img.shields.io/badge/TSX-Node_Engine-3178C6) |
+| **Backend & DB** | ![NodeJS](https://img.shields.io/badge/Node.js-20.x-339933?logo=nodedotjs&logoColor=white) ![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white) ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas_M0-47A248?logo=mongodb&logoColor=white) ![JWT](https://img.shields.io/badge/JWT-Auth-black?logo=jsonwebtokens) |
 | **AI Core** | ![Google Gemini](https://img.shields.io/badge/Google_GenAI-Gemini_3.7_Flash-8E75B2?logo=google&logoColor=white) |
 | **Charts & Data** | ![Recharts](https://img.shields.io/badge/Recharts-Data_Viz-22C55E) ![D3](https://img.shields.io/badge/D3.js-Calculations-F9A03C?logo=d3dotjs&logoColor=white) |
-| **Deployment** | ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white) ![Cloud Run](https://img.shields.io/badge/Google_Cloud_Run-Deployment-4285F4?logo=googlecloud&logoColor=white) |
+| **Hosting** | ![Render](https://img.shields.io/badge/Render-Web_Service-black?logo=render&logoColor=46E3B7) |
 
 </div>
 
@@ -88,18 +94,18 @@ Developers can inspect line-by-line modifications via a synchronized side-by-sid
 │                                                                         │
 │   ┌─────────────────────┐  ┌────────────────────┐  ┌────────────────┐  │
 │   │ Auth & Session Guard│  │ Prompt Engineering │  │ Clean & Parse  │  │
-│   │ getSafeAuthHeaders  │  │ & Schema Enforcer  │  │ JSON Pipeline  │  │
+│   │ JWT Bearer Verify   │  │ & Schema Enforcer  │  │ JSON Pipeline  │  │
 │   └──────────┬──────────┘  └──────────┬─────────┘  └───────▲────────┘  │
 └──────────────┼────────────────────────┼────────────────────┼────────────┘
-               │ Secure Internal Request│ Streaming Response │
+               │ Secure Gemini Request  │ Structured Output  │
                ▼                        ▼                    │
-┌────────────────────────────────────────────────────────────┴────────────┐
-│                 Google Gemini Generative AI Model Cluster               │
-│                                                                         │
-│     • gemini-3.7-flash (Primary Compiler Engine)                        │
-│     • gemini-3.1-flash-lite / gemini-flash-latest (Dynamic Fallback)    │
-│     • Strict Structured JSON Output Validation                          │
-└─────────────────────────────────────────────────────────────────────────┘
+┌───────────────────────────────┐     ┌──────────────────────────────────┐
+│   Google Gemini AI Cluster    │     │      MongoDB Atlas Database      │
+│                               │     │                                  │
+│ • gemini-3.7-flash (Primary)  │     │ • users (auth & bcrypt hashes)   │
+│ • Dynamic Fallback Resolvers  │     │ • history (optimizations & diff) │
+│ • Structured JSON Generation  │     │ • quiz_scores (assessments)      │
+└───────────────────────────────┘     └──────────────────────────────────┘
 ```
 
 ---
@@ -113,104 +119,98 @@ sequenceDiagram
     participant UI as React UI (Diff & Studio)
     participant Svr as Express Server (/api/optimize)
     participant AI as Gemini GenAI Engine
-    participant DB as Session History Storage
+    participant DB as MongoDB Atlas
 
-    Dev->>UI: Inputs unoptimized code & selects target language
-    UI->>Svr: POST /api/optimize (Safe Bearer Auth Header)
-    Svr->>AI: generateWithFallback(Structured Prompt + Schema)
-    AI-->>Svr: Strict JSON (Complexity, Speedup, Full Optimized Code)
+    Dev->>UI: Inputs code & clicks "Optimize Code"
+    UI->>Svr: POST /api/optimize (Bearer JWT Auth)
+    Svr->>AI: generateWithFallback(System Instruction + Schema)
+    AI-->>Svr: Strict JSON (Complexity, Metrics, Full Optimized Code)
     Svr->>Svr: cleanAndParseJSON() & normalizeFullSourceCode()
-    Svr->>DB: Record optimization event in persistent history
-    Svr-->>UI: 200 OK (Optimized Code, Explanations, Metrics)
-    UI->>UI: Compute AST diffLines & render synchronized view
+    Svr->>DB: db.collection('history').insertOne(optimizationRecord)
+    Svr-->>UI: 200 OK (Optimized Code, Explanations, Metrics, historyId)
+    UI->>UI: Compute AST diffLines & render synchronized split view
     Dev->>UI: One-click "Copy Full Code" or "Export .patch"
 ```
 
 ---
 
-## 🚀 Quickstart & Local Development
+## 🍃 MongoDB Atlas Configuration
 
-### Prerequisites
-- **Node.js**: `v18.0.0` or higher
-- **npm** or **yarn** or **pnpm**
-- **Gemini API Key**: Obtainable from [Google AI Studio](https://aistudio.google.com/)
+1. Create a free **M0 Cluster** at [mongodb.com/atlas](https://www.mongodb.com/atlas).
+2. Under **Security > Database Access**, create a database user and password.
+3. Under **Security > Network Access**, click **Add IP Address** $\to$ **Allow Access from Anywhere (`0.0.0.0/0`)** (required for cloud hosting like Render).
+4. Under **Clusters > Connect > Drivers**, copy the connection string:
+   ```env
+   MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.abcde.mongodb.net/code_optimizer?retryWrites=true&w=majority
+   ```
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/your-username/ai-code-optimizer-studio.git
-cd ai-code-optimizer-studio
-```
+---
 
-### 2. Install dependencies
+## 🚀 Deploy to Render
+
+### Option 1: 1-Click Blueprint (Using `render.yaml`)
+
+1. Push your repository to **GitHub**.
+2. Go to [Render Dashboard](https://dashboard.render.com/) $\to$ Click **New +** $\to$ **Blueprint**.
+3. Connect your repository.
+4. Set your `GEMINI_API_KEY` and `MONGODB_URI` environment variables and click **Apply**.
+
+---
+
+### Option 2: Manual Web Service Setup
+
+1. In [Render Dashboard](https://dashboard.render.com/), click **New +** $\to$ **Web Service**.
+2. Connect your GitHub repository.
+3. Configure the settings:
+   - **Language:** `Node`
+   - **Build Command:** `npm install && npm run build`
+   - **Start Command:** `npm run start`
+   - **Plan:** `Free`
+4. Add the following **Environment Variables**:
+
+| Key | Value | Description |
+|---|---|---|
+| `GEMINI_API_KEY` | `your_gemini_api_key` | Secret key from [Google AI Studio](https://aistudio.google.com/) |
+| `MONGODB_URI` | `mongodb+srv://...` | MongoDB Atlas cluster connection string |
+| `JWT_SECRET` | `a_secure_random_string` | Secret for signing user authentication tokens |
+| `NODE_ENV` | `production` | Enables production bundle and static serving |
+
+5. Click **Create Web Service**. Your app will build and go live on your Render URL!
+
+---
+
+## 💻 Local Development
+
+### 1. Install dependencies
 ```bash
 npm install
 ```
 
-### 3. Setup environment variables
-Create a `.env` file in the root directory:
+### 2. Setup `.env` file
 ```env
-# Server Port (Defaults to 3000)
 PORT=3000
-
-# Google Gemini AI Secret Key (Server-side only)
-GEMINI_API_KEY=your_gemini_api_key_here
+GEMINI_API_KEY=your_gemini_api_key
+MONGODB_URI=mongodb+srv://<user>:<password>@cluster0.mongodb.net/code_optimizer?retryWrites=true&w=majority
+JWT_SECRET=your_local_jwt_secret
 ```
 
-### 4. Run development server
+### 3. Run development server
 ```bash
 npm run dev
 ```
-Open your browser at `http://localhost:3000` to interact with the application.
-
----
-
-## 📦 Build & Production
-
-To compile both client-side static assets and the self-contained server bundle:
-
-```bash
-npm run build
-```
-
-To start the production server:
-```bash
-npm run start
-```
-
----
-
-## 🐳 Docker & Cloud Deployment
-
-### Build Docker Container
-```bash
-docker build -t ai-code-optimizer:latest .
-```
-
-### Run Docker Container
-```bash
-docker run -d -p 3000:3000 -e GEMINI_API_KEY="your_api_key" --name code-optimizer ai-code-optimizer:latest
-```
-
-### Deploy to Google Cloud Run
-```bash
-gcloud run deploy ai-code-optimizer \
-  --source . \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --set-env-vars GEMINI_API_KEY="your_api_key"
-```
+Open `http://localhost:3000` in your browser.
 
 ---
 
 ## 🛡️ Security & Best Practices
 
-- **Zero Client API Key Leaks:** The `GEMINI_API_KEY` is strictly accessed within server-side Express handlers and is never packaged in client-side bundles.
-- **Sanitized Auth & Headers:** Requests utilize `getSafeAuthHeaders()` to prevent malformed bearer strings from causing unexpected token errors.
-- **Safe Parsing Engine:** All AI responses pass through `cleanAndParseJSON` to strip rogue markdown formatting before state ingestion.
+- **Zero Client Key Leaks:** `GEMINI_API_KEY` and `MONGODB_URI` are server-only secrets and are never exposed in browser JavaScript bundles.
+- **Bcrypt Password Security:** User passwords are never saved in plaintext; passwords are salted and hashed with 10 salt rounds.
+- **Resilient Fallback:** If `MONGODB_URI` is not provided or connection times out, the app safely falls back to local memory without crashing.
 
 ---
 
 ## 📄 License
 
-Distributed under the **MIT License**. See `LICENSE` for more information.
+Distributed under the **MIT License**.
+
