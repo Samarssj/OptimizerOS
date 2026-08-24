@@ -33,6 +33,13 @@ function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
+function getMongoHost(uri: string | undefined): string | null {
+  if (!uri) return null;
+  const authority = uri.replace(/^mongodb(?:\+srv)?:\/\//, '').split('/')[0].split('?')[0];
+  const host = authority.slice(authority.lastIndexOf('@') + 1);
+  return host || null;
+}
+
 // In-memory storage fallback is only for local development without MongoDB configured
 const inMemoryUsers: any[] = [];
 const inMemoryHistory: any[] = [];
@@ -378,6 +385,8 @@ async function startServer() {
       error: mongoConnectionError || lastMongoOperationError,
       database: isMongoConnected ? mongoDatabaseName : 'local_storage',
       authPersistence: isPersistentStorageRequired() ? 'required' : 'development-fallback-allowed',
+      mongoHost: getMongoHost(process.env.MONGODB_URI),
+      usersCollection: 'users',
       release: process.env.RENDER_GIT_COMMIT || process.env.GIT_COMMIT || 'unknown',
     });
   });
@@ -426,6 +435,7 @@ async function startServer() {
           }
           await db.collection('users').insertOne(newUser);
           savedInDb = true;
+          console.log(`[Database] User persisted: userId=${userId}, database=${mongoDatabaseName}, collection=users`);
         } catch (dbErr: any) {
           const message = getErrorMessage(dbErr);
           lastMongoOperationError = `Signup persistence failed: ${message}`;
