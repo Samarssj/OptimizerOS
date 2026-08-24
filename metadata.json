@@ -1,0 +1,6 @@
+{
+  "name": "Code Optimizer & Analyzer",
+  "description": "High-performance code optimizer, Big-O complexity analyzer, auto-refactor design pattern studio (loops to functional operations, guard clauses, memoization), dynamic Gemini model discovery with fallback chains, and performance quizzes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
